@@ -1,41 +1,42 @@
 import socket 
 import threading
 
-HEADER = 64
-PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
+# constants to make it easier to change certain things
+HEADER = 64 # Header length to be sent/received, can be changed as per requirements.
+PORT = 5050 # Specifies Port to try and connect to
+SERVER = socket.gethostbyname(socket.gethostname()) # IP of server
+ADDR = (SERVER, PORT) # full address with both server and port
+FORMAT = 'utf-8' # encode/decode format for converting bits to text and vice versa
+DISCONNECT_MESSAGE = "!DISCONNECT" # static message to disconnect so server doesnt get overloaded
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # initialize server
+server.bind(ADDR) # Bind this address to the server - means that this is the server
 
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} connected.")
+def handle_client(conn, addr): # function that receives and prints data
+    print(f"[NEW CONNECTION] {addr} connected.") # To show when connections have been added etc.
 
-    connected = True
+    connected = True # loop variable
     while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
+        msg_length = conn.recv(HEADER).decode(FORMAT) # receives Header containing number of bytes in actual message
+        if msg_length: # handling exception if it is empty
+            msg_length = int(msg_length) # int conversion
+            msg = conn.recv(msg_length).decode(FORMAT) # receiving message from connected client
             if msg == DISCONNECT_MESSAGE:
-                connected = False
+                connected = False # handling disconnection
 
-            print(f"{msg}")
+            print(f"{msg}") # print message
 
-    conn.close()
+    conn.close() # close connection fully
         
 
-def start():
-    server.listen()
+def start(): # starting server
+    server.listen() # listening for connections
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
-        conn, addr = server.accept()
+        conn, addr = server.accept() # accepts client requests
         thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        thread.start() # threading allows for multiple clients to connect and continue their work
+        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}") 
 
 
 print("[STARTING] server is starting...")
