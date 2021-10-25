@@ -13,3 +13,5 @@ Next, I used the keyboard module to take input and perform the required actions 
 Lastly, I put both together to get the final output. One challenge I faced was collecting input, as pynput may not work as well as keyboard since it has more conditions etc. Therefore, I went with the basic keyboard module, as pygame requires another screen which would be excessive.
 
 This program works by transmitting information to a server from a client. The client-side takes care of all the calculations and just sends the final output to the server.
+
+[Link to my video](https://youtu.be/ooBzuQd1arA)
